@@ -1,0 +1,79 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.0.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+	id 'java'
+	id 'eclipse'
+	id 'jacoco'
+	id 'net.ltgt.apt' version '0.19'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+group = 'br.com.academiadev'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-actuator')
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation('org.springframework.boot:spring-boot-starter-data-rest')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('io.jsonwebtoken:jjwt:0.9.1')
+
+	compile('io.springfox:springfox-swagger-ui:2.9.2')
+	compile('io.springfox:springfox-swagger2:2.9.2')
+
+	implementation('org.mapstruct:mapstruct-jdk8:1.2.0.Final')
+	compileOnly('org.mapstruct:mapstruct-processor:1.2.0.Final')
+	annotationProcessor('org.mapstruct:mapstruct-processor:1.2.0.Final')
+
+	compileOnly('org.projectlombok:lombok:1.18.4')
+	annotationProcessor('org.projectlombok:lombok:1.18.4')
+	
+	compile("com.h2database:h2")
+	runtimeOnly('org.postgresql:postgresql')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+sourceSets {
+	main.java.srcDirs += 'build/generated/source/apt/main'
+}
+
+// Herdar configurações do Gradle
+// Possibilita isso:
+// ./gradlew bootRun -Dspring.profiles.active=prod
+//bootRun.systemProperties = System.properties
+
+compileJava {
+	aptOptions.processors.add(0, 'org.mapstruct.ap.MappingProcessor')
+	aptOptions.processors.add(0, 'lombok.launch.AnnotationProcessorHider$AnnotationProcessor')
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
