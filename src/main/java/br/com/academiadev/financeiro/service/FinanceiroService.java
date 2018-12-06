@@ -8,24 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import br.com.academiadev.financeiro.dto.ContaCreatedDTO;
-import br.com.academiadev.financeiro.dto.EntidadeCreatedDTO;
-import br.com.academiadev.financeiro.dto.LancamentoCreatedDTO;
-import br.com.academiadev.financeiro.dto.UsuarioCreatedDTO;
 import br.com.academiadev.financeiro.entity.Baixa;
 import br.com.academiadev.financeiro.entity.Conta;
 import br.com.academiadev.financeiro.entity.Entidade;
 import br.com.academiadev.financeiro.entity.Lancamento;
 import br.com.academiadev.financeiro.entity.Usuario;
 import br.com.academiadev.financeiro.enums.TipoLancamento;
-import br.com.academiadev.financeiro.exceptions.ContaNaoEncontradaException;
-import br.com.academiadev.financeiro.exceptions.EntidadeNaoEncontradaException;
-import br.com.academiadev.financeiro.exceptions.LancamentoNaoEncontradoException;
-import br.com.academiadev.financeiro.exceptions.UsuarioNaoEncontradoException;
-import br.com.academiadev.financeiro.mapper.ContaMapper;
-import br.com.academiadev.financeiro.mapper.EntidadeMapper;
-import br.com.academiadev.financeiro.mapper.LancamentoMapper;
-import br.com.academiadev.financeiro.mapper.UsuarioMapper;
+import br.com.academiadev.financeiro.exception.ContaNaoEncontradaException;
+import br.com.academiadev.financeiro.exception.EntidadeNaoEncontradaException;
+import br.com.academiadev.financeiro.exception.LancamentoNaoEncontradoException;
+import br.com.academiadev.financeiro.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.financeiro.repository.BaixaRepository;
 import br.com.academiadev.financeiro.repository.ContaRepository;
 import br.com.academiadev.financeiro.repository.EntidadeRepository;
@@ -68,11 +60,11 @@ public class FinanceiroService {
 				.findById(idUsuario)
 				.orElseThrow(() -> new UsuarioNaoEncontradoException());
 		
-		Entidade exemplo = new Entidade();
-		exemplo.setUsuario(usuario);
-		exemplo.setId(idEntidade);
-		Entidade entidade = entidadeRepository
-				.findOne(Example.of(exemplo))
+		Entidade entidade = usuario
+				.getEntidades()
+				.stream()
+				.filter(ent -> ent.getId().equals(idEntidade))
+				.findFirst()
 				.orElseThrow(() -> new EntidadeNaoEncontradaException());
 		
 		if (lancamento.getTipo().equals(TipoLancamento.PAGAR))
@@ -86,15 +78,13 @@ public class FinanceiroService {
 	}
 	
 	public Lancamento buscarLancamento(Long idUsuario, Long idLancamento) {
-		Usuario usuario = usuarioRepository
+		return usuarioRepository
 				.findById(idUsuario)
-				.orElseThrow(() -> new UsuarioNaoEncontradoException());
-		
-		Lancamento lancamento = new Lancamento();
-		lancamento.setId(idLancamento);
-		lancamento.setUsuario(usuario);
-		return lancamentoRepository
-				.findOne(Example.of(lancamento))
+				.orElseThrow(() -> new UsuarioNaoEncontradoException())
+				.getLancamentos()
+				.stream()
+				.filter(lanc -> lanc.getId().equals(idLancamento))
+				.findFirst()
 				.orElseThrow(() -> new LancamentoNaoEncontradoException());
 	}
 	
@@ -109,54 +99,55 @@ public class FinanceiroService {
 		entidade.setUsuario(
 				usuarioRepository
 				.findById(idUsuario)
-				.orElseThrow(() -> new UsuarioNaoEncontradoException()));
+				.orElseThrow(() -> new UsuarioNaoEncontradoException())
+				);
 		return entidadeRepository.save(entidade);
 	}
 	
 	public Entidade buscarEntidade(Long idUsuario, Long idEntidade) {
-		Entidade entidade = new Entidade();
-		entidade.setId(idEntidade);
-		entidade.setUsuario(
-				usuarioRepository
-				.findById(idUsuario)
-				.orElseThrow(() -> new UsuarioNaoEncontradoException()));
-		
-		return entidadeRepository
-				.findOne(Example.of(entidade))
-				.orElseThrow(() -> new EntidadeNaoEncontradaException());
+		return usuarioRepository
+			.findById(idUsuario)
+			.orElseThrow(() -> new UsuarioNaoEncontradoException())
+			.getEntidades()
+			.stream()
+			.filter(ent -> ent.getId().equals(idEntidade))
+			.findFirst()
+			.orElseThrow(() -> new EntidadeNaoEncontradaException());
 	}
 	
 	public List<Entidade> buscarEntidadesDoUsuario(Long idUsuario){
-		Entidade entidade = new Entidade();
-		entidade.setUsuario(usuarioRepository
+		return usuarioRepository
 				.findById(idUsuario)
-				.orElseThrow(() -> new UsuarioNaoEncontradoException()));
-		
-		return entidadeRepository.findAll(Example.of(entidade));
+				.orElseThrow(() -> new UsuarioNaoEncontradoException())
+				.getEntidades();
 	}
 	
 	public Conta criarConta(Long idUsuario, Conta conta) {
 		conta.setUsuario(usuarioRepository
 				.findById(idUsuario)
 				.orElseThrow(() -> new UsuarioNaoEncontradoException()));
-		
 		return contaRepository.save(conta);
 	}
 	
 	public Conta buscarConta(Long idUsuario, Long idConta) {
-		Conta conta = new Conta();
-		conta.setUsuario(usuarioRepository
+		return usuarioRepository
 				.findById(idUsuario)
-				.orElseThrow(() -> new UsuarioNaoEncontradoException()));
-		conta.setId(idConta);
-		return contaRepository
-				.findOne(Example.of(conta))
+				.orElseThrow(() -> new UsuarioNaoEncontradoException())
+				.getContas()
+				.stream()
+				.filter(cnt -> cnt.getId().equals(idConta))
+				.findFirst()
 				.orElseThrow(() -> new ContaNaoEncontradaException());
 	}
 	
-	public List<Lancamento> buscarLancamentosDaConta(Long idConta) {
-		return contaRepository
-				.findById(idConta)
+	public List<Lancamento> buscarLancamentosDaConta(Long idUsuario, Long idConta) {
+		return usuarioRepository
+				.findById(idUsuario)
+				.orElseThrow(() -> new UsuarioNaoEncontradoException())
+				.getContas()
+				.stream()
+				.filter(cnt -> cnt.getId().equals(idConta))
+				.findFirst()
 				.orElseThrow(() -> new ContaNaoEncontradaException())
 				.getBaixas()
 				.stream()
