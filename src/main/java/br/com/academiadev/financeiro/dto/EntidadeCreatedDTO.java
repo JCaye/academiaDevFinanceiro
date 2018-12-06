@@ -10,14 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EntidadeCreatedDTO extends EntidadeDTO {
 	@ApiModelProperty(value = "Identificador do usuario", example = "123")
-	private Integer id_usuario;
+	private Long id_usuario;
 	
 	@ApiModelProperty(value = "Identificador da entidade", example = "123")
-	private Integer id;
+	private Long id;
 	
 	@ApiModelProperty(value = "Status", allowableValues = "ATIVO,INATIVO")
 	private String status;
 	
-	@ApiModelProperty(value = "Data de criação", example = "2018-11-07 12:05")
+	@ApiModelProperty(value = "Data de criação", example = "2018-01-01 00:00:00")
 	private String data_criacao;
+	
+	@ApiModelProperty(value = "Data de alteração", example = "2018-01-01 00:00:00")
+	private String data_alteracao;
 }

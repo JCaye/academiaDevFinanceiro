@@ -30,6 +30,7 @@ public abstract class UsuarioMapper {
 	@Mappings({
 		@Mapping(target = "id"),
 		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
+		@Mapping(target = "data_alteracao", source = "dataDeAlteracao"),
 		@Mapping(target = "nome"),
 		@Mapping(target = "email"),
 		@Mapping(target = "status")
@@ -42,13 +43,14 @@ public abstract class UsuarioMapper {
 	
 	@Mappings({
 		@Mapping(target = "id"),
-		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
 		@Mapping(target = "nome"),
 		@Mapping(target = "email"),
 		@Mapping(target = "status"),
 		@Mapping(target = "saldo"),
 		@Mapping(target = "pagar"),
-		@Mapping(target = "receber")
+		@Mapping(target = "receber"),
+		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
+		@Mapping(target = "data_alteracao", source = "dataDeAlteracao")
 	})
 	public abstract UsuarioDetailDTO toDetailDto(Usuario entity);
 }

@@ -148,6 +148,6 @@ public class FinanceiroController {
 	@PostMapping("/{idUsuario}/conta/{idConta}/{idLancamento}")
 	@ResponseStatus(HttpStatus.OK)
 	public String resolverLancamento(@PathVariable Long idUsuario, @PathVariable Long idConta, @PathVariable Long idLancamento, @RequestParam("do") String acao) {
-		return new String();
+		return financeiroService.resolverLancamento(idUsuario, idConta, idLancamento, acao);
 	}
 }

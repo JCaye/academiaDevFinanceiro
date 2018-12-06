@@ -20,7 +20,7 @@ public class LancamentoDTO {
 	
 	@ApiModelProperty(value = "Valor", example = "16.50", required = true)
 	@NotNull
-	private Long valor;
+	private Double valor;
 	
 	@ApiModelProperty(value = "Tipo", allowableValues = "PAGAR,RECEBER", required = true)
 	@NotNull

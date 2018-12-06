@@ -22,10 +22,12 @@ public abstract class ContaMapper {
 	public abstract Conta toEntity(ContaDTO dto);
 
 	@Mappings({
-		@Mapping(target = "nome"),
 		@Mapping(target = "id"),
+		@Mapping(target = "id_usuario", source = "usuario.id"),
+		@Mapping(target = "nome"),
 		@Mapping(target = "saldo"),
-		@Mapping(target = "data_criacao", source = "dataDeCriacao")
+		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
+		@Mapping(target = "data_alteracao", source = "dataDeAlteracao")
 	})
 	public abstract ContaCreatedDTO toDto(Conta entity);
 	

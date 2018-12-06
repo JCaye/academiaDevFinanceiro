@@ -26,8 +26,14 @@ public abstract class LancamentoMapper {
 	
 	@Mappings({
 		@Mapping(target = "id"),
+		@Mapping(target = "id_usuario", source = "usuario.id"),
+		@Mapping(target = "descricao"),
+		@Mapping(target = "observacao"),
 		@Mapping(target = "status"),
-		@Mapping(target = "data_criacao", source = "dataDeCriacao")
+		@Mapping(target = "tipo"),
+		@Mapping(target = "valor"),
+		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
+		@Mapping(target = "data_alteracao", source = "dataDeAlteracao")
 	})
 	public abstract LancamentoCreatedDTO toDto(Lancamento entity);
 

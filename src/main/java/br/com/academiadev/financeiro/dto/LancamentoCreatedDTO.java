@@ -18,6 +18,12 @@ public class LancamentoCreatedDTO extends LancamentoDTO {
 	@ApiModelProperty(value = "Status", allowableValues = "ABERTO,BAIXADO")
 	private String status;
 	
-	@ApiModelProperty(value = "Data de criação", example = "2018-11-01 11:59")
+	@ApiModelProperty(value = "Tipo", allowableValues = "PAGAR,RECEBER")
+	private String tipo;
+	
+	@ApiModelProperty(value = "Data de criação", example = "2018-01-01 00:00:00")
 	private String data_criacao;
+	
+	@ApiModelProperty(value = "Data de alteração", example = "2018-01-01 00:00:00")
+	private String data_alteracao;
 }

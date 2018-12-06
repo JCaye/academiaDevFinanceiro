@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import br.com.academiadev.financeiro.entity.Baixa;
@@ -13,6 +12,7 @@ import br.com.academiadev.financeiro.entity.Conta;
 import br.com.academiadev.financeiro.entity.Entidade;
 import br.com.academiadev.financeiro.entity.Lancamento;
 import br.com.academiadev.financeiro.entity.Usuario;
+import br.com.academiadev.financeiro.enums.StatusLancamento;
 import br.com.academiadev.financeiro.enums.TipoLancamento;
 import br.com.academiadev.financeiro.exception.ContaNaoEncontradaException;
 import br.com.academiadev.financeiro.exception.EntidadeNaoEncontradaException;
@@ -162,31 +162,33 @@ public class FinanceiroService {
 				.getContas();
 	}
 	
-	public void resolverLancamento(Long idUsuario, Long idConta, Long idLancamento, String acao) {
+	public String resolverLancamento(Long idUsuario, Long idConta, Long idLancamento, String acao) {
 		Usuario usuario = usuarioRepository
 				.findById(idUsuario)
 				.orElseThrow(() -> new UsuarioNaoEncontradoException());
 		
-		Conta exemploConta = new Conta();
-		exemploConta.setUsuario(usuario);
-		exemploConta.setId(idConta);
-		Conta conta = contaRepository
-				.findOne(Example.of(exemploConta))
+		Conta conta = usuario
+				.getContas()
+				.stream()
+				.filter(cnt -> cnt.getId().equals(idConta))
+				.findFirst()
 				.orElseThrow(() -> new ContaNaoEncontradaException());
 		
-		Lancamento exemploLanc = new Lancamento();
-		exemploLanc.setUsuario(usuario);
-		exemploLanc.setId(idLancamento);
-		Lancamento lancamento = lancamentoRepository
-				.findOne(Example.of(exemploLanc))
+		Lancamento lancamento = usuario
+				.getLancamentos()
+				.stream()
+				.filter(lnc -> lnc.getId().equals(idLancamento))
+				.findFirst()
 				.orElseThrow(() -> new LancamentoNaoEncontradoException());
 		
 		if (acao.equals("baixar")) {
 			if (lancamento.getTipo().equals(TipoLancamento.PAGAR)) {
+				conta.setSaldo(conta.getSaldo().subtract(lancamento.getValor()));
 				usuario.setSaldo(usuario.getSaldo().subtract(lancamento.getValor()));
 				usuario.setPagar(usuario.getPagar().subtract(lancamento.getValor()));
 			}
 			if (lancamento.getTipo().equals(TipoLancamento.RECEBER)) {
+				conta.setSaldo(conta.getSaldo().add(lancamento.getValor()));
 				usuario.setSaldo(usuario.getSaldo().add(lancamento.getValor()));
 				usuario.setReceber(usuario.getReceber().subtract(lancamento.getValor()));
 			}
@@ -198,23 +200,34 @@ public class FinanceiroService {
 				.dataDeBaixa(LocalDateTime.now())
 				.valor(lancamento.getValor())
 				.build();
+			baixaRepository.save(baixa);
 			lancamento.setBaixa(baixa);
 			lancamento.setDataDeBaixa(LocalDateTime.now());
+			lancamento.setStatus(StatusLancamento.BAIXADO);
 			lancamentoRepository.save(lancamento);
+			return "Lancamento baixado com sucesso";
 		}
 		
 		if (acao.equals("estornar")) {
+			if (!lancamento.getStatus().equals(StatusLancamento.BAIXADO))
+				throw new UnsupportedOperationException();
 			if (lancamento.getTipo().equals(TipoLancamento.PAGAR)) {
+				conta.setSaldo(conta.getSaldo().add(lancamento.getValor()));
 				usuario.setSaldo(usuario.getSaldo().add(lancamento.getValor()));
 				usuario.setPagar(usuario.getPagar().add(lancamento.getValor()));
 			}
 			if (lancamento.getTipo().equals(TipoLancamento.RECEBER)) {
+				conta.setSaldo(conta.getSaldo().subtract(lancamento.getValor()));
 				usuario.setSaldo(usuario.getSaldo().subtract(lancamento.getValor()));
 				usuario.setReceber(usuario.getReceber().add(lancamento.getValor()));
 			}
 			lancamento.setDataDeBaixa(null);
+			lancamento.setStatus(StatusLancamento.ABERTO);
 			baixaRepository.delete(lancamento.getBaixa());
+			lancamentoRepository.save(lancamento);
+			return "Lancamento estornado com sucesso";
 		}
 		
+		throw new UnsupportedOperationException();
 	}
 }

@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UsuarioDetailDTO extends UsuarioCreatedDTO {
 	@ApiModelProperty(value = "Saldo", example = "2000")
-	private Integer saldo;
+	private Double saldo;
 	
 	@ApiModelProperty(value = "A pagar", example = "800")
-	private Integer pagar;
+	private Double pagar;
 	
 	@ApiModelProperty(value = "A receber", example = "500")
-	private Integer receber;
+	private Double receber;
 }

@@ -10,11 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ContaCreatedDTO extends ContaDTO {
 	@ApiModelProperty(value = "Identificador", example = "123")
-	private Integer id;
+	private Long id;
+	
+	@ApiModelProperty(value = "Identificador do usuário", example = "123")
+	private Long id_usuario;
 	
 	@ApiModelProperty(value = "Saldo", example = "0.0")
-	private Long saldo;
+	private Double saldo;
 	
-	@ApiModelProperty(value = "Data de criação", example = "2018-11-01 11:50")
+	@ApiModelProperty(value = "Data de criação", example = "2018-01-01 00:00:00")
 	private String data_criacao;
+	
+	@ApiModelProperty(value = "Data de alteração", example = "2018-01-01 00:00:00")
+	private String data_alteracao;
 }

@@ -23,11 +23,13 @@ public abstract class EntidadeMapper {
 	public abstract Entidade toEntity(EntidadeDTO dto);
 
 	@Mappings({
+		@Mapping(target = "id"),
 		@Mapping(target = "id_usuario"),
+		@Mapping(target = "nome"),
+		@Mapping(target = "tipo"),
 		@Mapping(target = "status"),
 		@Mapping(target = "data_criacao", source = "dataDeCriacao"),
-		@Mapping(target = "nome"),
-		@Mapping(target = "tipo")
+		@Mapping(target = "data_alteracao", source = "dataDeAlteracao")
 	})
 	public abstract EntidadeCreatedDTO toDto(Entidade entity);
 	
