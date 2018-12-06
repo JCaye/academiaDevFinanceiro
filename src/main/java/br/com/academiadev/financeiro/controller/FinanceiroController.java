@@ -2,6 +2,8 @@ package br.com.academiadev.financeiro.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +50,7 @@ public class FinanceiroController {
 	
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
-	public UsuarioCreatedDTO criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+	public UsuarioCreatedDTO criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO) {
 		return usuarioMapper.toDto(
 				financeiroService.criarUsuario(
 						usuarioMapper.toEntity(usuarioDTO)
@@ -73,7 +75,7 @@ public class FinanceiroController {
 	
 	@PostMapping("/{idUsuario}/entidade")
 	@ResponseStatus(HttpStatus.CREATED)
-	public EntidadeCreatedDTO criarEntidade(@PathVariable Long idUsuario, @RequestBody EntidadeDTO entidade) {
+	public EntidadeCreatedDTO criarEntidade(@PathVariable Long idUsuario, @RequestBody @Valid EntidadeDTO entidade) {
 		return entidadeMapper.toDto(
 				financeiroService.criarEntidade(
 						idUsuario, entidadeMapper.toEntity(entidade)
@@ -97,7 +99,7 @@ public class FinanceiroController {
 	
 	@PostMapping("/{idUsuario}/entidade/{idEntidade}/lancamento")
 	@ResponseStatus(HttpStatus.CREATED)
-	public LancamentoCreatedDTO criarLancamento(@RequestBody LancamentoDTO lancamento, @PathVariable Long idUsuario, @PathVariable Long idEntidade) {
+	public LancamentoCreatedDTO criarLancamento(@RequestBody @Valid LancamentoDTO lancamento, @PathVariable Long idUsuario, @PathVariable Long idEntidade) {
 		return lancamentoMapper.toDto(
 				financeiroService.criarLancamento(
 						idUsuario, idEntidade, lancamentoMapper.toEntity(lancamento)
@@ -114,7 +116,7 @@ public class FinanceiroController {
 	
 	@PostMapping("/{idUsuario}/conta")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ContaCreatedDTO criarConta(@PathVariable Long idUsuario, @RequestBody ContaDTO conta) {
+	public ContaCreatedDTO criarConta(@PathVariable Long idUsuario, @RequestBody @Valid ContaDTO conta) {
 		return contaMapper.toDto(
 				financeiroService.criarConta(
 						idUsuario, contaMapper.toEntity(conta)
