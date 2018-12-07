@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class Usuario extends EntidadeAuditavel<Long> {
 	private StatusTipo status;
 	
 	@OneToMany(
+			fetch = FetchType.EAGER,
 			mappedBy = "usuario",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true
@@ -44,6 +46,7 @@ public class Usuario extends EntidadeAuditavel<Long> {
 	private List<Entidade> entidades = new ArrayList<>();
 	
 	@OneToMany(
+			fetch = FetchType.EAGER,
 			mappedBy = "usuario",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true
@@ -52,6 +55,7 @@ public class Usuario extends EntidadeAuditavel<Long> {
 	private List<Lancamento> lancamentos = new ArrayList<>();
 	
 	@OneToMany(
+			fetch = FetchType.EAGER,
             mappedBy = "usuario",
             cascade = CascadeType.ALL,
             orphanRemoval = true

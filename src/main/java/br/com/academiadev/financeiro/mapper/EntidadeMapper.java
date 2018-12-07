@@ -24,7 +24,7 @@ public abstract class EntidadeMapper {
 
 	@Mappings({
 		@Mapping(target = "id"),
-		@Mapping(target = "id_usuario"),
+		@Mapping(target = "id_usuario", source = "usuario.id"),
 		@Mapping(target = "nome"),
 		@Mapping(target = "tipo"),
 		@Mapping(target = "status"),
